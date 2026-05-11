@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace TaskManagerConsole
 {
@@ -25,7 +26,7 @@ namespace TaskManagerConsole
 
 
     class Program
-{
+    {
 
         static List<TaskItem> tasks = new List<TaskItem>();
         static string FileName = "tasks.json";
@@ -62,22 +63,72 @@ namespace TaskManagerConsole
 
         static void ViewTasks()
         {
-           
+            
+            foreach (TaskItem item in tasks)
+            {
+                Console.WriteLine(item.Id + ". " + item.Title
+                    + "\nDescription: " + item.Description
+                    + "\nStatus: " + item.Status
+                    + "\n");
+            }
+            Console.ReadLine();
         }
 
         static void AddTask()
         {
-            
+            TaskItem task = new TaskItem();
+            if (tasks.Count > 0)
+            {
+                task.Id = tasks.Max(t => t.Id) + 1;
+            }
+            else
+            {
+                task.Id = 0;
+            }
+            Console.WriteLine("Title: ");
+            task.Title = Console.ReadLine();
+            Console.WriteLine("Description: ");
+            task.Description = Console.ReadLine();
+            Console.WriteLine("Status: ");
+            TaskStatus status;
+            if (Enum.TryParse(Console.ReadLine(), out status))
+            {
+                task.Status = status;
+            }
+            tasks.Add(task);
+
         }
 
         static void ChangeStatus()
         {
-           
+            Console.WriteLine("Write Status's id: ");
+            int id = int.Parse(Console.ReadLine());
+            TaskStatus status;
+            Console.WriteLine("Wtite new status: ");
+            Enum.TryParse(Console.ReadLine(), out status);
+
+            foreach (TaskItem item in tasks)
+            {
+                if(item.Id == id)
+                {
+                    item.Status = status;
+                }
+                break;
+            }
         }
 
         static void DeleteTask()
         {
-            
+            Console.WriteLine("Write id: ");
+            int id = int.Parse(Console.ReadLine());
+            foreach (TaskItem item in tasks)
+            {
+                if (item.Id == id)
+                {
+                    tasks.Remove(item);
+                    break;
+                }
+            }
         }
 
         static void SaveData()
@@ -110,3 +161,4 @@ namespace TaskManagerConsole
             }
         }
     }
+}
