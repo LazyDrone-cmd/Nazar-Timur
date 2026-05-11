@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace TaskManagerConsole
 {
@@ -25,11 +26,11 @@ namespace TaskManagerConsole
 
 
     class Program
-{
+    {
 
         static List<TaskItem> tasks = new List<TaskItem>();
-        static string FileName = "tasks.json";
-
+        const string FileName = "tasks.json";
+        const string LogFileName = "log.txt";
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -62,22 +63,83 @@ namespace TaskManagerConsole
 
         static void ViewTasks()
         {
-           
+
+            foreach (TaskItem item in tasks)
+            {
+                Console.WriteLine(item.Id + ". " + item.Title
+                    + "\nDescription: " + item.Description
+                    + "\nStatus: " + item.Status
+                    + "\n");
+            }
+            Console.ReadLine();
         }
 
         static void AddTask()
         {
-            
+            TaskItem task = new TaskItem();
+            if (tasks.Count > 0)
+            {
+                task.Id = tasks.Max(t => t.Id) + 1;
+            }
+            else
+            {
+                task.Id = 0;
+            }
+            Console.WriteLine("Title: ");
+            task.Title = Console.ReadLine();
+            Console.WriteLine("Description: ");
+            task.Description = Console.ReadLine();
+            Console.WriteLine("Status: ");
+            TaskStatus status;
+            if (Enum.TryParse(Console.ReadLine(), out status))
+            {
+                task.Status = status;
+            }
+            tasks.Add(task);
+            int newId = tasks.Count > 0 ? tasks.Max(t => t.Id) + 1 : 1;
+
+            tasks.Add(new TaskItem
+            {
+                Id = newId,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status
+            });
+
+            LogAction($"ДОДАНО: Задача з ID {newId} ('{task.Title}')");
         }
 
         static void ChangeStatus()
         {
-           
+            Console.WriteLine("Write Status's id: ");
+            int id = int.Parse(Console.ReadLine());
+            TaskStatus status;
+            Console.WriteLine("Wtite new status: ");
+            Enum.TryParse(Console.ReadLine(), out status);
+
+            foreach (TaskItem item in tasks)
+            {
+                if (item.Id == id)
+                {
+                    item.Status = status;
+                }
+                break;
+            }
         }
 
         static void DeleteTask()
         {
-            
+            Console.WriteLine("Write id: ");
+            int id = int.Parse(Console.ReadLine());
+            foreach (TaskItem item in tasks)
+            {
+                if (item.Id == id)
+                {
+                    tasks.Remove(item);
+                    LogAction($"ВИДАЛЕНО: Задача з ID {item.Id} ('{item.Title}')");
+                    break;
+                }
+            }
         }
 
         static void SaveData()
@@ -109,4 +171,17 @@ namespace TaskManagerConsole
                 }
             }
         }
+        static void LogAction(string message)
+        {
+            try
+            {
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}\n";
+                File.AppendAllText(LogFileName, logEntry);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Помилка логування");
+            }
+        }
     }
+}
