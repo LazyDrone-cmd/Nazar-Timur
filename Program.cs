@@ -31,6 +31,7 @@ namespace TaskManagerConsole
         static List<TaskItem> tasks = new List<TaskItem>();
         static string FileName = "tasks.json";
         static TaskStatus? filterStatus = null;
+        const string LogFileName = "log.txt";
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -126,7 +127,7 @@ namespace TaskManagerConsole
                 task.Status = status;
             }
             tasks.Add(task);
-
+            LogAction($"ДОДАНО: Задача з ID {task.Id} ('{task.Title}')");
         }
 
         static void ChangeStatus()
@@ -156,6 +157,7 @@ namespace TaskManagerConsole
                 if (item.Id == id)
                 {
                     tasks.Remove(item);
+                    LogAction($"ВИДАЛЕНО: Задача з ID {item.Id} ('{item.Title}')");
                     break;
                 }
             }
@@ -188,6 +190,18 @@ namespace TaskManagerConsole
                 {
                     tasks = new List<TaskItem>();
                 }
+            }
+        }
+        static void LogAction(string message)
+        {
+            try
+            {
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}\n";
+                File.AppendAllText(LogFileName, logEntry);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Помилка логування");
             }
         }
     }
