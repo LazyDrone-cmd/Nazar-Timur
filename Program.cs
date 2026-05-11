@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace TaskManagerConsole
 {
+<<<<<<< HEAD
     public enum TaskStatus
     {
         New,
@@ -14,11 +15,50 @@ namespace TaskManagerConsole
         Done
     }
     public class TaskItem
+=======
+    New,
+    InProgress,
+    Done
+}
+
+
+
+class Program
+{
+    static List<TaskItem> tasks = new List<TaskItem>();
+    class TaskItem
+>>>>>>> d2e6354d47623b63d8f07f4371fd7e9c0f26b8d7
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public TaskStatus Status { get; set; }
+<<<<<<< HEAD
+=======
+    }
+    class TaskManager 
+    {
+        public void AddTask()
+        {
+            
+        }
+        public void DeleteTask()
+        {
+
+        }
+        public void getAllTasks()
+        {
+
+        }
+        public void getIdTask()
+        {
+
+        }
+        public void ChangeStatus()
+        {
+
+        }
+>>>>>>> d2e6354d47623b63d8f07f4371fd7e9c0f26b8d7
     }
 
     class Program
