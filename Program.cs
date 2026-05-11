@@ -14,6 +14,7 @@ namespace TaskManagerConsole
         InProgress,
         Done
     }
+    
 
     public class TaskItem
     {
@@ -27,10 +28,9 @@ namespace TaskManagerConsole
 
     class Program
     {
-
         static List<TaskItem> tasks = new List<TaskItem>();
         static string FileName = "tasks.json";
-
+        static TaskStatus? filterStatus = null;
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -45,6 +45,8 @@ namespace TaskManagerConsole
                 Console.WriteLine("3. Змінити статус задачі");
                 Console.WriteLine("4. Видалити задачу");
                 Console.WriteLine("5. Зберегти та вийти");
+                Console.WriteLine("6. Сортувати за айді: ");
+                Console.WriteLine("7. Фільтрувати за статусом: ");
                 Console.Write("\nВиберіть опцію: ");
 
                 string choice = Console.ReadLine();
@@ -56,8 +58,34 @@ namespace TaskManagerConsole
                     case "3": ChangeStatus(); break;
                     case "4": DeleteTask(); break;
                     case "5": SaveData(); exit = true; break;
+                    case "6": SortTasks(); break;
+                    case "7": FilterStatus(); break;
                     default: Console.WriteLine("Невірний вибір..."); Console.ReadKey(); break;
                 }
+            }
+        }
+
+        static void SortTasks() // По айди
+        {
+            tasks = tasks.OrderBy(t => t.Id).ToList();
+        }
+
+        static void FilterStatus() 
+        {
+
+            Console.WriteLine("1 - New");
+            Console.WriteLine("2 - InProgress");
+            Console.WriteLine("3 - Done");
+            Console.WriteLine("0 - Disable filter");
+
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1": filterStatus = TaskStatus.New; break;
+                case "2": filterStatus = TaskStatus.InProgress; break;
+                case "3": filterStatus = TaskStatus.Done; break;
+                case "0": filterStatus = null; break;
             }
         }
 
@@ -66,9 +94,11 @@ namespace TaskManagerConsole
             
             foreach (TaskItem item in tasks)
             {
+                if (filterStatus != null && item.Status != filterStatus)
+                    continue;
                 Console.WriteLine(item.Id + ". " + item.Title
-                    + "\nDescription: " + item.Description
-                    + "\nStatus: " + item.Status
+                    + "\nопис: " + item.Description
+                    + "\nСтатус: " + item.Status
                     + "\n");
             }
             Console.ReadLine();
@@ -85,11 +115,11 @@ namespace TaskManagerConsole
             {
                 task.Id = 0;
             }
-            Console.WriteLine("Title: ");
+            Console.WriteLine("Заголовок: ");
             task.Title = Console.ReadLine();
-            Console.WriteLine("Description: ");
+            Console.WriteLine("Опис: ");
             task.Description = Console.ReadLine();
-            Console.WriteLine("Status: ");
+            Console.WriteLine("Статус: ");
             TaskStatus status;
             if (Enum.TryParse(Console.ReadLine(), out status))
             {
@@ -101,10 +131,10 @@ namespace TaskManagerConsole
 
         static void ChangeStatus()
         {
-            Console.WriteLine("Write Status's id: ");
+            Console.WriteLine("Впиши id: ");
             int id = int.Parse(Console.ReadLine());
             TaskStatus status;
-            Console.WriteLine("Wtite new status: ");
+            Console.WriteLine("Впиши новий статус: ");
             Enum.TryParse(Console.ReadLine(), out status);
 
             foreach (TaskItem item in tasks)
@@ -119,7 +149,7 @@ namespace TaskManagerConsole
 
         static void DeleteTask()
         {
-            Console.WriteLine("Write id: ");
+            Console.WriteLine("Впиши id: ");
             int id = int.Parse(Console.ReadLine());
             foreach (TaskItem item in tasks)
             {
