@@ -46,8 +46,9 @@ namespace TaskManagerConsole
                 Console.WriteLine("3. Змінити статус задачі");
                 Console.WriteLine("4. Видалити задачу");
                 Console.WriteLine("5. Зберегти та вийти");
-                Console.WriteLine("6. Сортувати за айді: ");
-                Console.WriteLine("7. Фільтрувати за статусом: ");
+                Console.WriteLine("6. Загрузити дані");
+                Console.WriteLine("7. Сортувати за айді: ");
+                Console.WriteLine("8. Фільтрувати за статусом: ");
                 Console.Write("\nВиберіть опцію: ");
 
                 string choice = Console.ReadLine();
@@ -59,8 +60,9 @@ namespace TaskManagerConsole
                     case "3": ChangeStatus(); break;
                     case "4": DeleteTask(); break;
                     case "5": SaveData(); exit = true; break;
-                    case "6": SortTasks(); break;
-                    case "7": FilterStatus(); break;
+                    case "6": LoadData();break;
+                    case "7": SortTasks(); break;
+                    case "8": FilterStatus(); break;
                     default: Console.WriteLine("Невірний вибір..."); Console.ReadKey(); break;
                 }
             }
@@ -143,8 +145,9 @@ namespace TaskManagerConsole
                 if(item.Id == id)
                 {
                     item.Status = status;
+                    break;
                 }
-                break;
+                
             }
         }
 
